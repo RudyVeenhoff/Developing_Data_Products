@@ -1,0 +1,84 @@
+---
+title: "Speeding on the A13"
+author: "Rudy Veenhoff"
+date: "12 december 2016"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+- A13 is an important motorway connecting The Hague and Rotterdam.
+- In 2011 TNO conducted a research on the traffic on this highway.
+- Numbers of cars per minute (flow) as well as average speed were measured using "loops" placed inside the road.
+- We will look at the average speed of the traffic along the highway at a given day.
+
+```{r setting up, cache=TRUE}
+setwd("~/Rudy/Data Science/Projects/Developing Data Products/PA2")
+rechtsSpeed <- read.csv("Rechts_Speed_2011.csv")
+colnames <- gsub("^X","",colnames(rechtsSpeed))
+order<-order(as.numeric(colnames))
+SpeedOrdered <- rechtsSpeed[order]
+
+is.wholenumber <-  function(x, tol = .Machine$double.eps^0.5){  
+  abs(x - round(x)) < tol
+}
+
+dayOfYear <- function(n){
+  if(n >=1 && n <= 365 && is.wholenumber(n)){
+    beginofday <- (n-1)*60*24
+    endofday <- n*60*24-1
+    SpeedOrdered[beginofday:endofday,]
+  }
+  else
+    stop("Please enter an integer between 1 and 365")
+}
+
+fullNameOfDay <- function(n){
+  Sys.setlocale("LC_TIME", "English")
+  daysof2011 <- seq(as.POSIXct("2011/1/1"),as.POSIXct("2011/12/31"),"day")
+  format(daysof2011[n],"%A %d %B %Y")
+}
+
+plotHeatmap <- function(n){
+  library(plotly)
+  
+  x <- list(
+    title = "The 143 measurement points on the A13"
+  )
+  
+  y <- list(
+    title = "Minutes past midnight"
+    )
+  
+  z <- dayOfYear(n)
+  
+  p <- plot_ly(z=as.matrix(dayOfYear(n)),
+               type="heatmap") %>% 
+    colorbar(title = "Speed in km/h") %>%
+    layout(title = fullNameOfDay(n), xaxis = x, yaxis=y)
+  p
+}
+```
+
+
+
+## Introduction part 2
+
+- The data shown is from the traffic coming from The Hague and going to Rotterdam.
+- There were 143 points of measurement along this side of the A13.
+
+
+
+
+## Heatmap
+```{r heatmap, message=FALSE, comment=FALSE, warning=FALSE}
+plotHeatmap(12)
+```
+
+## Try it yourself!
+If you want to make heatmaps for other days yourself, check out my github account (github.com/RudyVeenhoff) for the code.
+
+
