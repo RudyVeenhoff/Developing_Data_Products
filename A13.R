@@ -26,20 +26,12 @@ fullNameOfDay <- function(n){
 
 plotHeatmap <- function(n){
   library(plotly)
-  
-  x <- list(
-    title = "The 143 measurement points on the A13"
-  )
-  
-  y <- list(
-    title = "Minutes past midnight"
-  )
-  
+  x <- list(title = "The 143 measurement points on the A13"  )
+  y <- list(title = "Minutes past midnight")
   z <- dayOfYear(n)
-  
   p <- plot_ly(z=as.matrix(dayOfYear(n)),
                type="heatmap") %>% 
-    colorbar(title = "Speed in km/h") %>%
-    layout(title = fullNameOfDay(n), xaxis = x, yaxis=y)
+       colorbar(title = "Speed in km/h") %>%
+       layout(title = fullNameOfDay(n), xaxis = x, yaxis=y)
   p
 }
